@@ -7,11 +7,11 @@ public class Card : MonoBehaviour
 {
     [SerializeField] private Button btnCard;
     [SerializeField] private Image imgIcon;
-
+ 
     public int id;
-    private bool isOpened;
+    public bool isOpened;
     private Sprite sprite;
-    
+
     // Start is called before the first frame update
     void Start()
     {
@@ -30,13 +30,26 @@ public class Card : MonoBehaviour
             imgIcon.gameObject.SetActive(false);
             isOpened = false;
         }
-        else { imgIcon.gameObject.SetActive(true);
+        else
+        {
+            imgIcon.gameObject.SetActive(true);
             isOpened = true;
         }
     }
     public void InitData(int id, Sprite sprite)
     {
         this.id = id;
-        imgIcon.sprite = sprite; 
+        imgIcon.sprite = sprite;
+
     }
+    public void FlipDown()
+    {
+        
+        imgIcon.gameObject.SetActive(false);
+    
+
+
+    }
+
+
 }
