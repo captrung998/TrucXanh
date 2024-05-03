@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,10 +8,12 @@ public class Card : MonoBehaviour
 {
     [SerializeField] private Button btnCard;
     [SerializeField] private Image imgIcon;
- 
+    [SerializeField] private CanvasGroup cgCard;
     public int id;
     public bool isOpened;
     private Sprite sprite;
+    private Action<Card> action;
+
 
     // Start is called before the first frame update
     void Start()
@@ -25,31 +28,30 @@ public class Card : MonoBehaviour
     }
     private void OnClickCard()
     {
-        if (isOpened)
-        {
-            imgIcon.gameObject.SetActive(false);
-            isOpened = false;
-        }
-        else
-        {
-            imgIcon.gameObject.SetActive(true);
-            isOpened = true;
-        }
+        action.Invoke(this);        
     }
-    public void InitData(int id, Sprite sprite)
+    public void InitData(int id, Sprite sprite, Action<Card> onClickCard)
     {
         this.id = id;
         imgIcon.sprite = sprite;
+        this.action = onClickCard;
 
     }
-    public void FlipDown()
+    public void FlipDown(bool isFlip)
     {
-        
-        imgIcon.gameObject.SetActive(false);
-    
-
-
+        imgIcon.gameObject.SetActive(isFlip);
     }
 
+    public void HideCard()
+    {
+        cgCard.alpha = 0;
+        cgCard.interactable =false;
+    }
 
+    public void ShowCard()
+    {
+        cgCard.alpha = 1;
+        cgCard.interactable = true;
+        imgIcon.gameObject.SetActive(true);
+    }
 }
