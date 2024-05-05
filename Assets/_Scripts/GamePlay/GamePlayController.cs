@@ -3,19 +3,23 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GamePlayController : MonoBehaviour
 {
     [SerializeField] private Card cardPrefab;
-    [SerializeField] private int totalCard = 24;
-    [SerializeField] private int countCard;
     [SerializeField] private Transform tfHolder;
+    [SerializeField] private TMP_InputField inputField;
+    [SerializeField] private Button buttonPlay;
+    [SerializeField] private TextMeshProUGUI txtError;
+    [SerializeField] private ScoreManager scoreManager;
 
     public Sprite[] sprites = new Sprite[100];
     public List<Card> cards = new List<Card>();
     private Action<Card> actionClickCard;
-    private ScoreManager scoreManager;
+    private int numberMap;
+
 
 
     private Card card1;
@@ -23,9 +27,10 @@ public class GamePlayController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        
+        txtError.text = "";
         sprites = Resources.LoadAll<Sprite>("Icons");
-        Init();
+        buttonPlay.onClick.AddListener(OnClickPlayButon);
     }
 
     // Update is called once per frame
@@ -38,11 +43,12 @@ public class GamePlayController : MonoBehaviour
 
     private void Init()
     {
+        scoreManager.RunTime(numberMap);
 
         List<int> randomIndexes = new List<int>();
 
 
-        for (int i = 0; i < totalCard / 2; i++)
+        for (int i = 0; i < numberMap / 2; i++)
         {
             randomIndexes.Add(i);
             randomIndexes.Add(i);
@@ -51,7 +57,7 @@ public class GamePlayController : MonoBehaviour
         ShuffleList(randomIndexes);
 
 
-        for (int i = 0; i < totalCard; i++)
+        for (int i = 0; i < numberMap; i++)
         {
             var card = Instantiate(cardPrefab, tfHolder);
             int id = randomIndexes[i];
@@ -76,10 +82,7 @@ public class GamePlayController : MonoBehaviour
 
 
 
-    private void test()
-    {
-        Debug.Log("Debug");
-    }
+    
     private void OnClickCard(Card card)
     {
         StopAllCoroutines();
@@ -117,6 +120,45 @@ public class GamePlayController : MonoBehaviour
         card1 = null;
         card2 = null;
     }
+    private void OnClickPlayButon()
+    {
+        numberMap = int.Parse(inputField.text);
 
+        if (CheckNumberMap(numberMap))
+        {
+            Init();
+            inputField.gameObject.SetActive(false);
+            buttonPlay.gameObject.SetActive(false);
+            txtError.gameObject.SetActive(false);
+            scoreManager. CountdownTimer(numberMap);
+        }
+    }
 
+    private bool CheckNumberMap(int numberMap)
+    {
+        bool canUseNumberMap = true;
+        if (numberMap == 0)
+        {
+            canUseNumberMap = false;
+            txtError.text = "Khong duoc bang 0";
+        }
+
+        else if (numberMap < 0)
+        {
+            canUseNumberMap = false;
+            txtError.text = "Khong duoc so am";
+        }
+        else if (numberMap % 2 != 0)
+        {
+            canUseNumberMap = false;
+            txtError.text = "Khong duoc so le";
+        }
+        else if (numberMap > 30)
+        {
+            canUseNumberMap = false;
+            txtError.text = "Khong duoc lon hon 30";
+        }
+        return canUseNumberMap;
+    }
+   
 }

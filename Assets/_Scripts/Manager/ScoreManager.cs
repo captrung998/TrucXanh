@@ -4,49 +4,69 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+using Debug = UnityEngine.Debug;
 
 public class ScoreManager : MonoBehaviour
 {
     public static int score = 0;
-    public static int remainingTime = 10;
+    [SerializeField] private int remainingTime = 10;
+    [SerializeField] private TMP_InputField inputField;
     public TextMeshProUGUI scoreText;
     public GameObject scoreTimePanel;
     public GameObject endGame;
     public TextMeshProUGUI gameOverText;
     public static float timeMoveSpeed = 0.004f;
+    public List<Card> cards = new List<Card>();
+
+
 
 
 
     void Start()
     {
-        StartCoroutine(CountdownTimer());
+
     }
 
-    void Update()
-    {
-        scoreText.text = "Score: " + score + " | " + "Time " + remainingTime;
-    }
 
     public static void AddScore(int amount)
     {
         score += amount;
     }
 
-    private IEnumerator CountdownTimer()
+    public IEnumerator CountdownTimer(int numberMap)
     {
+
+
         while (remainingTime > 0)
         {
+
+            scoreText.text = "Score: " + score + " | " + "Time " + remainingTime;
             yield return new WaitForSeconds(1f);
+            if (score == numberMap / 2) remainingTime = 0;
             remainingTime--;
+
         }
-        GameOver();
+
+        GameOver(numberMap);
+
+
+
     }
 
-    private void GameOver()
+    private void GameOver(int numberMap)
     {
+
         Time.timeScale = 0;
 
-        if (score > 12) { gameOverText.text = "You Win\nScore: " + score; }
+        if (score == numberMap / 2)
+        {
+
+            gameOverText.text = "You Win\nScore: " + score ;
+            Debug.Log(numberMap);
+            
+
+        }
         else { gameOverText.text = "Game Over\nScore: " + score; }
 
 
@@ -55,5 +75,9 @@ public class ScoreManager : MonoBehaviour
 
 
 
+    }
+    public void RunTime(int numberMap)
+    {
+        StartCoroutine(CountdownTimer(numberMap));
     }
 }
